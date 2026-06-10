@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Confeitaria Luar Rubro | Sabores Artesanais
+</title>
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<link
+href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400;600&display=swap"
+rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<link
+rel="stylesheet"
+href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+
+<div id="preloader-overlay">
+
+<div class="preloader-box">
+
+<span>
+
+Luar Rubro
+
+</span>
+
+<div class="preloader-bar-container">
+
+<div class="preloader-bar"></div>
+
+</div>
+
+<small>
+
+Preparando doçuras...
+
+</small>
+
+</div>
+
+</div>
+
+
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+
+<div class="container">
+
+<a
+class="navbar-brand"
+href="/">
+
+Luar Rubro
+
+</a>
+
+
+<div class="search-wrapper mx-auto d-none d-lg-block">
+
+<input
+
+type="text"
+
+id="ingredient-search"
+
+placeholder="🔍 Buscar ingrediente"
+
+onkeyup="filterCakes()">
+
+</div>
+
+
+
+<div class="d-flex align-items-center">
+
+<div
+
+class="cart-icon"
+
+id="cart-icon"
+
+onclick="toggleCart()">
+
+🛒
+
+<span
+
+class="cart-count"
+
+id="cart-count">
+
+0
+
+</span>
+
+</div>
+
+<button
+
+class="navbar-toggler ms-2"
+
+type="button"
+
+data-bs-toggle="collapse"
+
+data-bs-target="#navbarNav">
+
+<span class="navbar-toggler-icon"></span>
+
+</button>
+
+</div>
+
+
+
+<div class="collapse navbar-collapse" id="navbarNav">
+
+<ul class="navbar-nav ms-auto">
+
+<li class="nav-item">
+<a class="nav-link" href="#hero">
+Início
+</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="/chefes">
+Chefes
+</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="#vitrine">
+Cardápio
+</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="#sobre-section">
+Sobre
+</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="#contato-section">
+Contato
+</a>
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</nav>
+
+
+
+<header
+
+id="hero"
+
+class="hero-section d-flex align-items-center justify-content-center">
+
+<div class="moon-orb"></div>
+
+<div class="hero-content text-center">
+
+<h1>
+
+Luar Rubro
+
+</h1>
+
+<p class="lead">
+
+O sabor místico em cada fatia.
+
+</p>
+
+</div>
+
+</header>
+
+
+
+<!-- CARDÁPIO -->
+
+<main
+class="container py-5"
+id="vitrine">
+
+<h2
+
+class="text-center text-white mb-5"
+
+style="
+font-family:'Great Vibes',cursive;
+font-size:3.5rem;
+">
+
+Nossas Criações
+
+</h2>
+
+
+<div
+
+class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
+
+id="bolo-cards">
+
+</div>
+
+
+</main>
+
+
+
+<section
+
+id="sobre-section"
+
+class="container mb-5">
+
+<div
+
+class="sobre-box p-5 rounded-4 shadow-lg text-dark bg-white">
+
+<h2 class="text-center mb-4">
+
+Sobre a Luar Rubro
+
+</h2>
+
+<p>
+
+A Luar Rubro nasceu do amor pela confeitaria artesanal.
+
+</p>
+
+<p>
+
+Criamos experiências através dos sabores.
+
+</p>
+
+<p>
+
+Bolos personalizados para momentos especiais.
+
+</p>
+
+</div>
+
+</section>
+
+
+
+<section
+
+id="contato-section"
+
+class="container py-5 text-white text-center">
+
+<h2
+
+class="mb-5"
+
+style="
+font-family:'Great Vibes',cursive;
+font-size:3rem;
+color:#dc3545;
+">
+
+Contato
+
+</h2>
+
+</section>
+
+
+
+<div
+
+class="cart-modal"
+
+id="cart-modal">
+
+<div id="cart-items"></div>
+
+<div class="cart-footer">
+
+<p>
+
+Total:
+<span id="cart-total">
+
+R$ 0,00
+
+</span>
+
+</p>
+
+<button
+onclick="checkoutWhatsApp()">
+
+Finalizar Pedido
+
+</button>
+
+</div>
+
+</div>
+
+
+
+<div
+
+class="cart-overlay"
+
+id="cart-overlay"
+
+onclick="toggleCart()">
+
+</div>
+
+
+
+<div id="toast-notification">
+
+🍰 Adicionado com Sucesso!
+
+</div>
+
+
+
+<footer>
+
+<p>
+
+© 2025 Confeitaria Luar Rubro · São Paulo
+
+</p>
+
+</footer>
+
+
+
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<script>
+
+const bolos = JSON.parse(
+`{{ bolos_json | safe }}`
+);
+
+</script>
+
+<script
+src="{{ url_for('static', filename='js/script.js') }}">
+</script>
+
+</body>
+
+</html>
