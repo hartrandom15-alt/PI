@@ -2,387 +2,257 @@
 <html lang="pt-br">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confeitaria Luar Rubro | Sabores Artesanais</title>
 
-<meta charset="UTF-8">
+  <!-- CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>
-Confeitaria Luar Rubro | Sabores Artesanais
-</title>
-
-<link
-href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-rel="stylesheet">
-
-<link
-href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400;600&display=swap"
-rel="stylesheet">
-
-<link
-rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<link
-rel="stylesheet"
-href="{{ url_for('static', filename='css/style.css') }}">
-
+  <!-- CSS Próprio -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
 
-
-<div id="preloader-overlay">
-
-<div class="preloader-box">
-
-<span>
-
-Luar Rubro
-
-</span>
-
-<div class="preloader-bar-container">
-
-<div class="preloader-bar"></div>
-
-</div>
-
-<small>
-
-Preparando doçuras...
-
-</small>
-
-</div>
-
-</div>
-
-
-
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-
-<div class="container">
-
-<a
-class="navbar-brand"
-href="/">
-
-Luar Rubro
-
-</a>
-
-
-<div class="search-wrapper mx-auto d-none d-lg-block">
-
-<input
-
-type="text"
-
-id="ingredient-search"
-
-placeholder="🔍 Buscar ingrediente"
-
-onkeyup="filterCakes()">
-
-</div>
-
-
-
-<div class="d-flex align-items-center">
-
-<div
-
-class="cart-icon"
-
-id="cart-icon"
-
-onclick="toggleCart()">
-
-🛒
-
-<span
-
-class="cart-count"
-
-id="cart-count">
-
-0
-
-</span>
-
-</div>
-
-<button
-
-class="navbar-toggler ms-2"
-
-type="button"
-
-data-bs-toggle="collapse"
-
-data-bs-target="#navbarNav">
-
-<span class="navbar-toggler-icon"></span>
-
-</button>
-
-</div>
-
-
-
-<div class="collapse navbar-collapse" id="navbarNav">
-
-<ul class="navbar-nav ms-auto">
-
-<li class="nav-item">
-<a class="nav-link" href="#hero">
-Início
-</a>
-</li>
-
-<li class="nav-item">
-<a class="nav-link" href="/chefes">
-Chefes
-</a>
-</li>
-
-<li class="nav-item">
-<a class="nav-link" href="#vitrine">
-Cardápio
-</a>
-</li>
-
-<li class="nav-item">
-<a class="nav-link" href="#sobre-section">
-Sobre
-</a>
-</li>
-
-<li class="nav-item">
-<a class="nav-link" href="#contato-section">
-Contato
-</a>
-</li>
-
-</ul>
-
-</div>
-
-</div>
-
-</nav>
-
-
-
-<header
-
-id="hero"
-
-class="hero-section d-flex align-items-center justify-content-center">
-
-<div class="moon-orb"></div>
-
-<div class="hero-content text-center">
-
-<h1>
-
-Luar Rubro
-
-</h1>
-
-<p class="lead">
-
-O sabor místico em cada fatia.
-
-</p>
-
-</div>
-
-</header>
-
-
-
-<!-- CARDÁPIO -->
-
-<main
-class="container py-5"
-id="vitrine">
-
-<h2
-
-class="text-center text-white mb-5"
-
-style="
-font-family:'Great Vibes',cursive;
-font-size:3.5rem;
-">
-
-Nossas Criações
-
-</h2>
-
-
-<div
-
-class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
-
-id="bolo-cards">
-
-</div>
-
-
-</main>
-
-
-
-<section
-
-id="sobre-section"
-
-class="container mb-5">
-
-<div
-
-class="sobre-box p-5 rounded-4 shadow-lg text-dark bg-white">
-
-<h2 class="text-center mb-4">
-
-Sobre a Luar Rubro
-
-</h2>
-
-<p>
-
-A Luar Rubro nasceu do amor pela confeitaria artesanal.
-
-</p>
-
-<p>
-
-Criamos experiências através dos sabores.
-
-</p>
-
-<p>
-
-Bolos personalizados para momentos especiais.
-
-</p>
-
-</div>
-
-</section>
-
-
-
-<section
-
-id="contato-section"
-
-class="container py-5 text-white text-center">
-
-<h2
-
-class="mb-5"
-
-style="
-font-family:'Great Vibes',cursive;
-font-size:3rem;
-color:#dc3545;
-">
-
-Contato
-
-</h2>
-
-</section>
-
-
-
-<div
-
-class="cart-modal"
-
-id="cart-modal">
-
-<div id="cart-items"></div>
-
-<div class="cart-footer">
-
-<p>
-
-Total:
-<span id="cart-total">
-
-R$ 0,00
-
-</span>
-
-</p>
-
-<button
-onclick="checkoutWhatsApp()">
-
-Finalizar Pedido
-
-</button>
-
-</div>
-
-</div>
-
-
-
-<div
-
-class="cart-overlay"
-
-id="cart-overlay"
-
-onclick="toggleCart()">
-
-</div>
-
-
-
-<div id="toast-notification">
-
-🍰 Adicionado com Sucesso!
-
-</div>
-
-
-
-<footer>
-
-<p>
-
-© 2025 Confeitaria Luar Rubro · São Paulo
-
-</p>
-
-</footer>
-
-
-
-<script
-src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
-</script>
-
-<script>
-
-const bolos = JSON.parse(
-`{{ bolos_json | safe }}`
-);
-
-</script>
-
-<script
-src="{{ url_for('static', filename='js/script.js') }}">
-</script>
+  <!-- PRELOADER -->
+  <div id="preloader-overlay">
+    <div class="preloader-box">
+      <span>Luar Rubro</span>
+      <div class="preloader-bar-container">
+        <div class="preloader-bar"></div>
+      </div>
+      <small>Preparando doçuras...</small>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">Luar Rubro</a>
+
+      <div class="search-wrapper mx-auto d-none d-lg-block">
+        <input type="text" id="ingredient-search" placeholder="🔍 Buscar ingrediente" onkeyup="filterCakes()">
+      </div>
+
+      <div class="d-flex align-items-center">
+        <a href="/meus-pedidos" class="cart-icon text-decoration-none text-white me-2" style="position:relative;" title="Meus Pedidos">
+          <i class="fa-solid fa-receipt"></i>
+          <span class="cart-count" id="meus-pedidos-count" style="display:none;">0</span>
+        </a>
+        <div class="cart-icon" id="cart-icon" onclick="toggleCart()">
+          🛒 <span class="cart-count" id="cart-count">0</span>
+        </div>
+        <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item">
+            <a class="nav-link" href="#hero">Início</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/chefes">Chefes</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#vitrine">Cardápio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#sobre-section">Sobre</a>
+          </li>
+          <li class="nav-item me-lg-3">
+            <a class="nav-link" href="#contato-section">Contato</a>
+          </li>
+
+          <!-- ÁREA DE AUTENTICAÇÃO DO USUÁRIO (COM ENGRENAGEM DE CONFIGURAÇÕES) -->
+          {% if usuario_logado %}
+            <li class="nav-item mt-2 mt-lg-0 d-flex align-items-center gap-2">
+              <span class="text-white-50 small">Olá, {{ usuario_logado }}</span>
+
+              <!-- Ícone de Engrenagem (Acessa o Perfil) -->
+              <a href="/perfil" class="btn btn-sm btn-outline-light" title="Configurações do Perfil">
+                <i class="fa-solid fa-gear"></i>
+              </a>
+
+              <a href="/logout" class="btn btn-sm btn-outline-danger">Sair</a>
+            </li>
+          {% else %}
+            <li class="nav-item mt-2 mt-lg-0">
+              <a href="/login" class="btn btn-outline-danger btn-sm me-2">Entrar</a>
+              <a href="/cadastro" class="btn btn-danger btn-sm">Cadastrar</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header id="hero" class="hero-section d-flex align-items-center justify-content-center">
+    <div class="moon-orb"></div>
+    <div class="hero-content text-center">
+      <h1>Luar Rubro</h1>
+      <p class="lead">O sabor místico em cada fatia.</p>
+    </div>
+  </header>
+
+  <!-- CARDÁPIO -->
+  <main class="container py-5" id="vitrine">
+    <h2 class="text-center text-white mb-5" style="font-family:'Great Vibes',cursive; font-size:3.5rem;">
+      Nossas Criações
+    </h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="bolo-cards"></div>
+  </main>
+
+  <!-- SOBRE -->
+  <section id="sobre-section" class="container mb-5">
+    <div class="sobre-box p-5 rounded-4 shadow-lg text-dark bg-white">
+      <h2 class="text-center mb-4">Sobre a Luar Rubro</h2>
+      <p>Nascida da paixão por transformar ingredientes simples em experiências inesquecíveis, a Luar Rubro é uma confeitaria dedicada à arte da doçaria artesanal. Cada criação nasce do equilíbrio entre técnica refinada e ingredientes selecionados, resultando em bolos que unem sabor, elegância e identidade própria.</p>
+      <p>Acreditamos que cada celebração merece um sabor à altura do momento. Por isso, cada receita é desenvolvida com atenção aos detalhes, respeitando o tempo de cada processo — do preparo ao acabamento — para entregar não apenas um bolo, mas uma memória.</p>
+      <p>Seja para uma data especial ou para adoçar o dia a dia, a Luar Rubro convida você a descobrir sabores autênticos, feitos com dedicação artesanal e paixão genuína pela confeitaria.</p>
+    </div>
+  </section>
+
+  <!-- CONTATO -->
+  <section id="contato-section" class="container py-5 text-white text-center">
+    <h2 class="mb-5" style="font-family:'Great Vibes',cursive; font-size:3rem; color:#dc3545;">
+      Contato
+    </h2>
+    <a href="https://wa.me/5511987654321" target="_blank" rel="noopener" class="btn btn-outline-light btn-lg rounded-pill px-5">
+      <i class="fa-brands fa-whatsapp me-2"></i>
+      (11) 98765-4321
+    </a>
+  </section>
+
+  <!-- CARRINHO MODAL -->
+  <div class="cart-modal" id="cart-modal">
+    <div id="cart-items"></div>
+    <div class="cart-footer">
+      <p>Total: <span id="cart-total">R$ 0,00</span></p>
+      <button onclick="checkoutWhatsApp()">Finalizar Pedido</button>
+    </div>
+  </div>
+
+  <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+
+  <!-- CHECKOUT MODAL -->
+  <div class="checkout-modal-overlay" id="checkout-modal">
+    <div class="checkout-modal-box">
+      <button class="close-btn" onclick="closeCheckout()">&times;</button>
+      <h3 class="checkout-title">Finalizar Pedido</h3>
+
+      <div class="checkout-field">
+        <label for="checkout-nome">Nome completo</label>
+        <input type="text" id="checkout-nome" placeholder="Seu nome" autocomplete="name">
+      </div>
+
+      <div class="checkout-field">
+        <label for="checkout-telefone">Telefone</label>
+        <input type="tel" id="checkout-telefone" placeholder="(00) 00000-0000" autocomplete="tel">
+      </div>
+
+      <div class="checkout-field">
+        <label for="checkout-pagamento">Forma de pagamento</label>
+        <select id="checkout-pagamento">
+          <option value="">Selecione...</option>
+          <option value="Pix">Pix</option>
+          <option value="Cartão de Crédito">Cartão de Crédito</option>
+          <option value="Cartão de Débito">Cartão de Débito</option>
+          <option value="Dinheiro">Dinheiro</option>
+        </select>
+        <small class="checkout-aviso-pagamento">O pagamento será realizado no momento da entrega.</small>
+      </div>
+
+      <p class="checkout-erro" id="checkout-erro"></p>
+
+      <button class="btn-add-modal checkout-confirm" onclick="confirmarCheckout()">
+        Continuar
+      </button>
+    </div>
+  </div>
+
+  <!-- ENDEREÇO MODAL -->
+  <div class="checkout-modal-overlay" id="endereco-modal">
+    <div class="checkout-modal-box">
+      <button class="close-btn" onclick="closeEndereco()">&times;</button>
+      <h3 class="checkout-title">Endereço de Entrega</h3>
+
+      <div class="checkout-field">
+        <label for="endereco-completo">Endereço completo</label>
+        <input type="text" id="endereco-completo" placeholder="Rua, número, bairro, cidade" autocomplete="street-address">
+      </div>
+
+      <div class="checkout-field">
+        <label for="endereco-complemento">Complemento (opcional)</label>
+        <input type="text" id="endereco-complemento" placeholder="Apto, bloco, ponto de referência...">
+      </div>
+
+      <p class="checkout-erro" id="endereco-erro"></p>
+
+      <div class="d-flex gap-2">
+        <button class="btn-add-modal checkout-confirm" style="background:transparent;border:1px solid rgba(139,0,0,0.3);color:var(--crimson);flex:1;" onclick="voltarParaCheckout()">
+          Voltar
+        </button>
+        <button class="btn-add-modal checkout-confirm" style="flex:2;" onclick="confirmarEndereco()">
+          Confirmar Pedido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA DE CARREGAMENTO (aparece após confirmar o pedido) -->
+  <div class="checkout-modal-overlay" id="pedido-processando-overlay">
+    <div class="checkout-modal-box text-center" style="max-width:360px;">
+      <div class="preloader-bar-container mx-auto mb-3">
+        <div class="preloader-bar"></div>
+      </div>
+      <p class="checkout-title" style="font-size:1.6rem;">Confirmando seu pedido...</p>
+      <small style="font-family:'Josefin Sans',sans-serif; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(26,15,18,0.5);">Só um instante</small>
+    </div>
+  </div>
+
+  <!-- DETALHES DO BOLO / AVALIAÇÕES MODAL -->
+  <div id="ingredientes-modal">
+    <div class="ingredientes-content">
+      <button class="close-btn" onclick="closeIngredientes()">&times;</button>
+      <div class="row g-0">
+        <div class="col-md-5">
+          <img id="ingredientes-img" src="" alt="">
+        </div>
+        <div class="col-md-7 p-4">
+          <div id="ingredientes-detalhes"></div>
+
+          <div class="mt-4 pt-4" style="border-top:1px solid rgba(139,0,0,0.1);">
+            <div id="avaliacao-media" class="mb-3"></div>
+            <div id="avaliacao-lista" class="mb-3" style="max-height:180px; overflow-y:auto;"></div>
+            <div id="avaliacao-form-container"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast-notification">
+    🍰 Adicionado com Sucesso!
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 Confeitaria Luar Rubro · São Paulo</p>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const bolos = {{ bolos_json|tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 </body>
 

@@ -41,7 +41,7 @@ max-width:700px;
 background:#1c1c1c;
 ">
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
 
 
 <div class="mb-4">
@@ -102,16 +102,131 @@ required>{{ bolo.descricao }}</textarea>
 
 <label class="form-label">
 
-Imagem
+Selo (tag)
+
+</label>
+
+<div class="d-flex flex-wrap gap-3 mb-2 p-3 rounded" style="background:rgba(255,255,255,0.05);">
+  <div class="form-check">
+    <input class="form-check-input tag-radio" type="radio" name="tag_radio" value="Especial" id="edit-tag-especial">
+    <label class="form-check-label" for="edit-tag-especial">Especial</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input tag-radio" type="radio" name="tag_radio" value="Novidade" id="edit-tag-novidade">
+    <label class="form-check-label" for="edit-tag-novidade">Novidade</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input tag-radio" type="radio" name="tag_radio" value="Promoção" id="edit-tag-promocao">
+    <label class="form-check-label" for="edit-tag-promocao">Promoção</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input tag-radio" type="radio" name="tag_radio" value="Mais Vendido" id="edit-tag-vendido">
+    <label class="form-check-label" for="edit-tag-vendido">Mais Vendido</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input tag-radio" type="radio" name="tag_radio" value="Edição Limitada" id="edit-tag-limitada">
+    <label class="form-check-label" for="edit-tag-limitada">Edição Limitada</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input tag-radio" type="radio" name="tag_radio" value="Exclusivo" id="edit-tag-exclusivo">
+    <label class="form-check-label" for="edit-tag-exclusivo">Exclusivo</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input tag-radio" type="radio" name="tag_radio" value="" id="edit-tag-outro">
+    <label class="form-check-label" for="edit-tag-outro">Outro</label>
+  </div>
+</div>
+
+<input type="text" id="edit-tag-outro-texto" class="form-control" placeholder="Digite o selo personalizado" disabled>
+<input type="hidden" name="tag" id="edit-tag-hidden">
+
+</div>
+
+
+<div class="mb-4">
+
+<label class="form-label">
+
+Características
+
+</label>
+
+<div class="d-flex flex-wrap gap-3 mb-2 p-3 rounded" style="background:rgba(255,255,255,0.05);">
+  <div class="form-check">
+    <input class="form-check-input ingrediente-check" type="checkbox" value="Artesanal" id="edit-ing-artesanal">
+    <label class="form-check-label" for="edit-ing-artesanal">Artesanal</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input ingrediente-check" type="checkbox" value="Premium" id="edit-ing-premium">
+    <label class="form-check-label" for="edit-ing-premium">Premium</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input ingrediente-check" type="checkbox" value="Vegano" id="edit-ing-vegano">
+    <label class="form-check-label" for="edit-ing-vegano">Vegano</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input ingrediente-check" type="checkbox" value="Sem Glúten" id="edit-ing-gluten">
+    <label class="form-check-label" for="edit-ing-gluten">Sem Glúten</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input ingrediente-check" type="checkbox" value="Sem Açúcar" id="edit-ing-acucar">
+    <label class="form-check-label" for="edit-ing-acucar">Sem Açúcar</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input ingrediente-check" type="checkbox" value="Gourmet" id="edit-ing-gourmet">
+    <label class="form-check-label" for="edit-ing-gourmet">Gourmet</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input ingrediente-check" type="checkbox" value="Tradicional" id="edit-ing-tradicional">
+    <label class="form-check-label" for="edit-ing-tradicional">Tradicional</label>
+  </div>
+</div>
+
+<input type="text" id="edit-ingredientes-outras" class="form-control" placeholder="Outras características (separadas por vírgula, opcional)">
+<input type="hidden" name="ingredientes" id="edit-ingredientes-hidden">
+
+</div>
+
+
+<div class="mb-4">
+
+<label class="form-label">
+
+Imagem atual
+
+</label>
+
+<br>
+
+{% if bolo.imagem %}
+<img
+src="{{ url_for('static', filename='imagens/' + bolo.imagem) }}"
+style="max-width:220px;border-radius:10px;margin-bottom:15px;">
+{% else %}
+<p class="text-secondary">Sem imagem cadastrada</p>
+{% endif %}
+
+</div>
+
+<div class="mb-4">
+
+<label class="form-label">
+
+Escolher nova imagem (opcional)
 
 </label>
 
 <input
-type="text"
+type="file"
 name="imagem"
 class="form-control"
-value="{{ bolo.imagem }}"
-required>
+accept=".jpg,.jpeg,.png,.webp">
+
+<small class="text-secondary">
+
+Se nenhuma imagem for selecionada, a atual será mantida.
+
+</small>
 
 </div>
 
@@ -141,6 +256,66 @@ Voltar
 
 
 </div>
+
+<script>
+  const ingredientesAtuais = {{ (bolo.ingredientes or 'Artesanal, Premium')|tojson }}
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const checkboxes = document.querySelectorAll('.ingrediente-check');
+  const naoConhecidos = [];
+
+  ingredientesAtuais.forEach(valor => {
+    const checkbox = Array.from(checkboxes).find(c => c.value === valor);
+    if (checkbox) {
+      checkbox.checked = true;
+    } else {
+      naoConhecidos.push(valor);
+    }
+  });
+
+  document.getElementById('edit-ingredientes-outras').value = naoConhecidos.join(', ');
+
+  // Pré-seleciona o selo (tag) atual do bolo
+  const tagAtual = {{ (bolo.tag or 'Especial')|tojson }};
+  const tagRadios = document.querySelectorAll('.tag-radio');
+  const tagOutroTexto = document.getElementById('edit-tag-outro-texto');
+  const tagCorrespondente = Array.from(tagRadios).find(r => r.value === tagAtual);
+
+  if (tagCorrespondente) {
+    tagCorrespondente.checked = true;
+  } else {
+    document.getElementById('edit-tag-outro').checked = true;
+    tagOutroTexto.disabled = false;
+    tagOutroTexto.value = tagAtual;
+  }
+
+  tagRadios.forEach(radio => {
+    radio.addEventListener('change', () => {
+      const ehOutro = document.getElementById('edit-tag-outro').checked;
+      tagOutroTexto.disabled = !ehOutro;
+      if (ehOutro) tagOutroTexto.focus();
+    });
+  });
+
+  document.querySelector('form').addEventListener('submit', function () {
+    const marcadas = Array.from(document.querySelectorAll('.ingrediente-check:checked')).map(c => c.value);
+    const outras = document.getElementById('edit-ingredientes-outras').value
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    document.getElementById('edit-ingredientes-hidden').value = [...marcadas, ...outras].join(', ');
+
+    const tagSelecionada = document.querySelector('.tag-radio:checked');
+    const valorTag = tagSelecionada.value === ''
+      ? tagOutroTexto.value.trim()
+      : tagSelecionada.value;
+
+    document.getElementById('edit-tag-hidden').value = valorTag || 'Especial';
+  });
+</script>
 
 </body>
 

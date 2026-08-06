@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acompanhar Pedido | Luar Rubro</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <style>
+    body.acompanhar-page {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    body.acompanhar-page main {
+      flex: 1;
+    }
+
+    .acompanhar-card {
+      max-width: 720px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 20px;
+      padding: 2.5rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .acompanhar-titulo {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.6rem;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 0.3rem;
+    }
+
+    .acompanhar-codigo {
+      text-align: center;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(250,243,232,0.4);
+      margin-bottom: 2.5rem;
+    }
+
+    /* TIMELINE */
+    .timeline {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 3rem;
+      padding: 0 0.5rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 17px;
+      left: 5%;
+      right: 5%;
+      height: 3px;
+      background: rgba(250,243,232,0.12);
+      z-index: 0;
+    }
+    .timeline-progresso {
+      position: absolute;
+      top: 17px;
+      left: 5%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--crimson), var(--gold));
+      z-index: 1;
+      transition: width 0.6s ease;
+    }
+    .timeline-etapa {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      text-align: center;
+    }
+    .timeline-bolinha {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--obsidian);
+      border: 3px solid rgba(250,243,232,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.8rem; font-weight: 600;
+      color: rgba(250,243,232,0.4);
+      transition: all 0.4s ease;
+      margin-bottom: 0.6rem;
+    }
+    .timeline-etapa.concluida .timeline-bolinha {
+      background: var(--crimson);
+      border-color: var(--gold);
+      color: var(--cream);
+    }
+    .timeline-etapa.atual .timeline-bolinha {
+      background: var(--gold);
+      border-color: var(--gold-light);
+      color: var(--obsidian);
+      box-shadow: 0 0 25px rgba(201,168,76,0.6);
+      animation: pulseEtapa 1.6s ease-in-out infinite;
+    }
+    @keyframes pulseEtapa {
+      0%, 100% { box-shadow: 0 0 15px rgba(201,168,76,0.5); }
+      50% { box-shadow: 0 0 35px rgba(201,168,76,0.9); }
+    }
+    .timeline-label {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase;
+      color: rgba(250,243,232,0.45);
+      max-width: 90px;
+    }
+    .timeline-etapa.concluida .timeline-label,
+    .timeline-etapa.atual .timeline-label {
+      color: var(--cream);
+    }
+
+    .status-atual-box {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .status-atual-label {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: rgba(250,243,232,0.4);
+      margin-bottom: 0.4rem;
+    }
+    .status-atual-valor {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; font-weight: 600;
+      color: var(--gold-light);
+    }
+
+    .info-secao {
+      border-top: 1px solid rgba(201,168,76,0.15);
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .info-linha {
+      display: flex; justify-content: space-between;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; color: rgba(250,243,232,0.8);
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .info-linha strong {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(250,243,232,0.4); font-weight: 400;
+    }
+
+    .itens-lista {
+      list-style: none; padding: 0; margin: 0;
+    }
+    .itens-lista li {
+      font-family: 'Cormorant Garamond', serif; font-size: 1rem;
+      color: rgba(250,243,232,0.85);
+      padding: 0.3rem 0;
+    }
+
+    .atualizando-aviso {
+      text-align: center;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(250,243,232,0.3);
+      margin-top: 2rem;
+    }
+    .atualizando-aviso .ponto {
+      display: inline-block;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold);
+      margin-right: 6px;
+      animation: piscar 1.4s ease-in-out infinite;
+    }
+    @keyframes piscar {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    /* ESTILO PARA O BOTÃO/BOX DE FINALIZAR PEDIDO */
+    .entregue-box {
+      background: rgba(201, 168, 76, 0.1);
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .btn-concluir-pedido {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border: none;
+      color: var(--obsidian);
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(201, 168, 76, 0.3);
+    }
+    .btn-concluir-pedido:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(201, 168, 76, 0.5);
+    }
+  </style>
+</head>
+
+<body class="acompanhar-page">
+
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">Luar Rubro</a>
+    </div>
+  </nav>
+
+  <main class="container py-5" style="margin-top:5rem;">
+    <div class="acompanhar-card">
+      <h1 class="acompanhar-titulo">Acompanhe seu Pedido</h1>
+      <p class="acompanhar-codigo">Código: {{ pedido.codigo_acompanhamento[:8] }}</p>
+
+      <div class="timeline" id="timeline">
+        <div class="timeline-progresso" id="timeline-progresso"></div>
+        {% for etapa in etapas %}
+          <div class="timeline-etapa {% if loop.index0 < etapa_atual %}concluida{% elif loop.index0 == etapa_atual %}atual{% endif %}" data-etapa-index="{{ loop.index0 }}">
+            <div class="timeline-bolinha">
+              {% if loop.index0 < etapa_atual %}
+                <i class="fa-solid fa-check"></i>
+              {% else %}
+                {{ loop.index }}
+              {% endif %}
+            </div>
+            <div class="timeline-label">{{ etapa }}</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if pedido.cancelado %}
+        <div class="status-atual-box" style="background:rgba(139,0,0,0.15); border-radius:12px; padding:1rem;">
+          <p class="status-atual-valor" style="color:var(--crimson-light);">Pedido Cancelado</p>
+        </div>
+      {% else %}
+
+        <!-- SE O STATUS FOR ENTREGUE: EXIBE A MENSAGEM E O BOTÃO DE CONFIRMAR -->
+        {% if pedido.status == 'Entregue' %}
+          <div class="entregue-box">
+            <p class="status-atual-label" style="color:var(--gold-light);">Seu bolo chegou!</p>
+            <p style="font-family:'Cormorant Garamond', serif; font-size:1.1rem; color:rgba(250,243,232,0.9); margin-bottom:1.2rem;">
+              Confirme o recebimento para concluir o pedido e liberar a avaliação dos produtos na vitrine.
+            </p>
+            <button onclick="confirmarRecebimento()" class="btn-concluir-pedido">
+              <i class="fa-solid fa-circle-check me-1"></i> Confirmar Recebimento
+            </button>
+          </div>
+        {% else %}
+          <div class="status-atual-box">
+            <p class="status-atual-label">Status atual</p>
+            <p class="status-atual-valor" id="status-atual-valor">{{ pedido.status }}</p>
+          </div>
+        {% endif %}
+
+      {% endif %}
+
+      <div class="info-secao">
+        <div class="info-linha">
+          <strong>Cliente</strong>
+          <span>{{ pedido.nome_cliente }}</span>
+        </div>
+        <div class="info-linha">
+          <strong>Endereço</strong>
+          <span>{{ pedido.endereco }}{% if pedido.complemento %} - {{ pedido.complemento }}{% endif %}</span>
+        </div>
+        {% if pedido.forma_pagamento %}
+          <div class="info-linha">
+            <strong>Pagamento</strong>
+            <span>{{ pedido.forma_pagamento }}</span>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="info-secao">
+        <p class="status-atual-label mb-2">Itens do pedido</p>
+        <ul class="itens-lista">
+          {% for item in pedido.itens %}
+            <li>{{ item.quantidade }}x {{ item.nome_bolo }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      {% if pode_cancelar %}
+        <div class="text-center mt-4" id="cancelar-secao">
+          <button
+            onclick="document.getElementById('confirmar-cancelamento-modal').classList.add('active')"
+            style="background:transparent; border:1px solid rgba(139,0,0,0.4); color:var(--crimson-light); font-family:'Josefin Sans',sans-serif; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; padding:0.6rem 1.5rem; border-radius:50px; cursor:pointer;">
+            Cancelar Pedido
+          </button>
+        </div>
+      {% endif %}
+
+      <p class="atualizando-aviso"><span class="ponto"></span>Esta página se atualiza automaticamente</p>
+    </div>
+  </main>
+
+  <!-- CONFIRMAÇÃO DE CANCELAMENTO -->
+  <div class="checkout-modal-overlay" id="confirmar-cancelamento-modal">
+    <div class="checkout-modal-box text-center">
+      <h3 class="checkout-title" style="font-size:1.8rem;">Tem certeza?</h3>
+      <p style="font-family:'Cormorant Garamond',serif; color:#3a2020; margin-bottom:1.5rem;">
+        Essa ação não pode ser desfeita. Seu pedido será cancelado e a produção não seguirá adiante.
+      </p>
+      <p class="checkout-erro" id="cancelar-erro"></p>
+      <div class="d-flex gap-2">
+        <button
+          onclick="document.getElementById('confirmar-cancelamento-modal').classList.remove('active')"
+          class="btn-add-modal" style="background:transparent;border:1px solid rgba(139,0,0,0.3);color:var(--crimson);flex:1;">
+          Não, manter pedido
+        </button>
+        <button onclick="confirmarCancelamento()" class="btn-add-modal" style="flex:1;">
+          Sim, cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Confeitaria Luar Rubro · São Paulo</p>
+  </footer>
+
+  <script>
+    const CODIGO_PEDIDO = "{{ pedido.codigo_acompanhamento }}";
+    const NOMES_ETAPAS = {{ etapas|tojson }};
+    const STATUS_INICIAL = "{{ pedido.status }}";
+
+    function atualizarTimeline(etapaAtual) {
+      const etapasEls = document.querySelectorAll('.timeline-etapa');
+
+      etapasEls.forEach((el) => {
+        const idx = parseInt(el.dataset.etapaIndex, 10);
+        el.classList.remove('concluida', 'atual');
+
+        if (idx < etapaAtual) {
+          el.classList.add('concluida');
+          el.querySelector('.timeline-bolinha').innerHTML = '<i class="fa-solid fa-check"></i>';
+        } else if (idx === etapaAtual) {
+          el.classList.add('atual');
+          el.querySelector('.timeline-bolinha').textContent = idx + 1;
+        } else {
+          el.querySelector('.timeline-bolinha').textContent = idx + 1;
+        }
+      });
+
+      const progresso = document.getElementById('timeline-progresso');
+      if (progresso && etapasEls.length > 1) {
+        const percentual = (etapaAtual / (etapasEls.length - 1)) * 90;
+        progresso.style.width = percentual + '%';
+      }
+    }
+
+    async function verificarStatus() {
+      try {
+        const resposta = await fetch(`/api/status-pedido/${CODIGO_PEDIDO}`);
+        if (!resposta.ok) return;
+
+        const dados = await resposta.json();
+
+        // Só faz reload se o status mudou na API em relação ao carregamento inicial da página
+        if (dados.cancelado || (dados.status === 'Entregue' && STATUS_INICIAL !== 'Entregue')) {
+          window.location.reload();
+          return;
+        }
+
+        const valorEl = document.getElementById('status-atual-valor');
+        if (valorEl) valorEl.textContent = dados.status;
+
+        atualizarTimeline(dados.etapa_atual);
+      } catch (e) {
+        console.log('Erro ao verificar status:', e);
+      }
+    }
+
+    // Ajusta a barra de progresso inicial
+    document.addEventListener('DOMContentLoaded', () => {
+      const etapaInicial = {{ etapa_atual }};
+      atualizarTimeline(etapaInicial);
+    });
+
+    // Função para o cliente confirmar que recebeu o pedido e ir direto para a Homepage
+    async function confirmarRecebimento() {
+      try {
+        const resposta = await fetch(`/api/concluir-pedido/${CODIGO_PEDIDO}`, {
+          method: 'POST'
+        });
+
+        const dados = await resposta.json();
+
+        if (dados.sucesso) {
+          // 1. Remove o código do localStorage local
+          let codigosLocais = JSON.parse(localStorage.getItem('luarRubroPedidos') || '[]');
+          codigosLocais = codigosLocais.filter(c => c !== CODIGO_PEDIDO);
+          localStorage.setItem('luarRubroPedidos', JSON.stringify(codigosLocais));
+
+          // 2. Redireciona imediatamente de volta para a homepage
+          window.location.href = '/';
+        } else {
+          alert(dados.erro || 'Erro ao concluir o pedido.');
+        }
+      } catch (e) {
+        console.log('Erro ao concluir pedido:', e);
+        alert('Erro de conexão ao concluir o pedido.');
+      }
+    }
+
+    async function confirmarCancelamento(){
+      const erro = document.getElementById('cancelar-erro');
+
+      try {
+        const resposta = await fetch(`/cancelar-pedido/${CODIGO_PEDIDO}`, {
+          method: 'POST'
+        });
+
+        const dados = await resposta.json();
+
+        if(!dados.sucesso){
+          if(erro){
+            erro.textContent = dados.erro || 'Não foi possível cancelar o pedido.';
+            erro.classList.add('show');
+          }
+          return;
+        }
+
+        // 1. Remove o código do localStorage do dispositivo
+        let codigosLocais = JSON.parse(localStorage.getItem('luarRubroPedidos') || '[]');
+        codigosLocais = codigosLocais.filter(c => c !== CODIGO_PEDIDO);
+        localStorage.setItem('luarRubroPedidos', JSON.stringify(codigosLocais));
+
+        // 2. Recarrega a página para exibir a mensagem de cancelado
+        window.location.reload();
+
+      } catch(e) {
+        console.log('Erro ao cancelar pedido:', e);
+        if(erro){
+          erro.textContent = 'Erro de conexão. Tente novamente.';
+          erro.classList.add('show');
+        }
+      }
+    }
+
+    // Se o pedido já estiver cancelado ao carregar/recarregar a página, redireciona em 3 segundos para a home
+    {% if pedido.cancelado %}
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 3000);
+    {% endif %}
+
+    // Verifica atualizações a cada 8 segundos (caso o status ainda não seja Entregue nem Cancelado)
+    {% if not pedido.cancelado and pedido.status != 'Entregue' %}
+      setInterval(verificarStatus, 8000);
+    {% endif %}
+  </script>
+</body>
+
+</html>

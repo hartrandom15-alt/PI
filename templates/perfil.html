@@ -4,11 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Criar Conta | Confeitaria Luar Rubro</title>
+  <title>Meu Perfil | Confeitaria Luar Rubro</title>
 
-  <!-- Google Fonts & FontAwesome -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     * {
@@ -28,7 +27,7 @@
       color: #e0e0e0;
     }
 
-    .auth-card {
+    .profile-card {
       background-color: #161616;
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 16px;
@@ -39,21 +38,21 @@
       text-align: center;
     }
 
-    .auth-title {
+    .profile-title {
       font-family: 'Great Vibes', cursive;
-      font-size: 3.2rem;
+      font-size: 3.5rem;
       color: #e63946;
       margin-bottom: 5px;
       font-weight: normal;
     }
 
-    .auth-subtitle {
+    .profile-subtitle {
       font-size: 0.95rem;
       color: #a0a0a0;
       margin-bottom: 30px;
     }
 
-    .auth-form {
+    .profile-form {
       display: flex;
       flex-direction: column;
       gap: 18px;
@@ -98,14 +97,29 @@
       cursor: pointer;
       margin-top: 10px;
       transition: background-color 0.2s, transform 0.1s;
+      width: 100%;
     }
 
     .btn-submit:hover {
       background-color: #d62828;
     }
 
-    .btn-submit:active {
-      transform: scale(0.99);
+    .btn-delete {
+      background-color: transparent;
+      color: #e63946;
+      border: 1px solid #e63946;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 15px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .btn-delete:hover {
+      background-color: rgba(230, 57, 70, 0.1);
     }
 
     .divider {
@@ -119,6 +133,7 @@
       color: #a0a0a0;
       text-decoration: none;
       font-size: 0.9rem;
+      margin-top: 15px;
       transition: color 0.2s;
     }
 
@@ -141,9 +156,9 @@
 
 <body>
 
-  <div class="auth-card">
-    <h1 class="auth-title">Criar Conta</h1>
-    <p class="auth-subtitle">Preencha seus dados para se cadastrar</p>
+  <div class="profile-card">
+    <h1 class="profile-title">Meu Perfil</h1>
+    <p class="profile-subtitle">Atualize suas informações pessoais</p>
 
     {% if mensagem %}
       <div class="alert-msg">
@@ -151,35 +166,43 @@
       </div>
     {% endif %}
 
-    <form class="auth-form" action="/cadastro" method="POST">
+    <!-- FORMULÁRIO DE ATUALIZAÇÃO DA CONTA -->
+    <form class="profile-form" action="/perfil" method="POST" novalidate>
       <div class="form-group">
-        <label for="nome">Nome Completo</label>
-        <input type="text" id="nome" name="nome" class="form-control" placeholder="Seu nome completo" required>
+        <label for="nome">Nome</label>
+        <input type="text" id="nome" name="nome" class="form-control" value="{{ usuario.nome or '' }}" placeholder="Seu nome">
       </div>
 
       <div class="form-group">
         <label for="email">E-mail</label>
-        <input type="email" id="email" name="email" class="form-control" placeholder="seu@email.com" required>
+        <input type="text" id="email" name="email" class="form-control" value="{{ usuario.email or '' }}" placeholder="Seu e-mail">
       </div>
 
       <div class="form-group">
-        <label for="senha">Senha</label>
-        <input type="password" id="senha" name="senha" class="form-control" placeholder="Sua senha secreta" required>
+        <label for="senha">Nova Senha (deixe em branco se não quiser alterar)</label>
+        <input type="password" id="senha" name="senha" class="form-control" placeholder="••••••••">
       </div>
 
-      <button type="submit" class="btn-submit">Cadastrar</button>
+      <button type="submit" class="btn-submit">Salvar Alterações</button>
     </form>
 
     <div class="divider"></div>
 
-    <a href="/login" class="back-link">
-      Já tem uma conta? Entrar
-    </a>
-    <br><br>
+    <!-- FORMULÁRIO DE EXCLUSÃO DA CONTA -->
+    <form action="/deletar-conta" method="POST" onsubmit="return confirmarExclusao();">
+      <button type="submit" class="btn-delete">Excluir Minha Conta</button>
+    </form>
+
     <a href="/" class="back-link">
       &larr; Voltar para o site
     </a>
   </div>
+
+  <script>
+    function confirmarExclusao() {
+      return confirm("Tem certeza de que deseja excluir sua conta? Esta ação não poderá ser desfeita.");
+    }
+  </script>
 
 </body>
 

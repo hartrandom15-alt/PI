@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meus Pedidos | Luar Rubro</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <style>
+    body.meus-pedidos-page {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    body.meus-pedidos-page main {
+      flex: 1;
+    }
+
+    .mp-titulo {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3rem;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .mp-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: 16px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.2rem;
+      backdrop-filter: blur(10px);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .mp-card:hover {
+      border-color: rgba(201,168,76,0.4);
+      transform: translateY(-3px);
+    }
+
+    .mp-card-topo {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem;
+    }
+
+    .mp-codigo {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(250,243,232,0.4);
+    }
+
+    .mp-data {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 0.9rem; color: rgba(250,243,232,0.5);
+    }
+
+    .mp-status-badge {
+      display: inline-block;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 5px 14px; border-radius: 50px;
+      border: 1px solid rgba(201,168,76,0.4);
+      color: var(--gold-light);
+      background: rgba(201,168,76,0.08);
+    }
+    .mp-status-badge.entregue {
+      color: #7ee08a; border-color: rgba(126,224,138,0.4); background: rgba(126,224,138,0.08);
+    }
+
+    .mp-itens {
+      list-style: none; padding: 0; margin: 0.6rem 0 1rem;
+    }
+    .mp-itens li {
+      font-family: 'Cormorant Garamond', serif; font-size: 1rem;
+      color: rgba(250,243,232,0.8);
+    }
+
+    .mp-link {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--gold); text-decoration: none;
+      border: 1px solid rgba(201,168,76,0.35);
+      padding: 0.5rem 1.2rem; border-radius: 50px;
+      display: inline-block; transition: all 0.25s;
+    }
+    .mp-link:hover {
+      background: rgba(201,168,76,0.12); color: var(--gold-light);
+    }
+
+    .mp-secao-titulo {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: rgba(250,243,232,0.45);
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+    }
+
+    .mp-vazio {
+      text-align: center; padding: 2rem;
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      color: rgba(250,243,232,0.35);
+    }
+
+    .mp-login-aviso {
+      text-align: center;
+      background: rgba(201,168,76,0.06);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 2rem;
+      font-family: 'Cormorant Garamond', serif;
+      color: rgba(250,243,232,0.7);
+    }
+    .mp-login-aviso a {
+      color: var(--gold); text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body class="meus-pedidos-page">
+
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">Luar Rubro</a>
+    </div>
+  </nav>
+
+  <main class="container py-5" style="margin-top:5rem; max-width:780px;">
+    <h1 class="mp-titulo">Meus Pedidos</h1>
+
+    {% if not usuario_logado %}
+      <div class="mp-login-aviso">
+        Pedidos feitos sem estar logado aparecem aqui apenas neste navegador.
+        <a href="/login">Entre na sua conta</a> ou <a href="/cadastro">cadastre-se</a> para acompanhar seus pedidos de qualquer dispositivo.
+      </div>
+    {% endif %}
+
+    {% if pedidos_conta %}
+      <p class="mp-secao-titulo">Pedidos da sua conta</p>
+      {% for pedido in pedidos_conta %}
+        <div class="mp-card">
+          <div class="mp-card-topo">
+            <div>
+              <span class="mp-codigo">Código: {{ pedido.codigo_acompanhamento[:8] }}</span><br>
+              <span class="mp-data">{{ pedido.data.strftime('%d/%m/%Y %H:%M') if pedido.data else '' }}</span>
+            </div>
+            <span class="mp-status-badge {% if pedido.status == 'Entregue' %}entregue{% endif %}">{{ pedido.status }}</span>
+          </div>
+          <ul class="mp-itens">
+            {% for item in pedido.itens %}
+              <li>{{ item.quantidade }}x {{ item.nome_bolo }}</li>
+            {% endfor %}
+          </ul>
+          <a href="/acompanhar/{{ pedido.codigo_acompanhamento }}" class="mp-link">Acompanhar Pedido</a>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <p class="mp-secao-titulo">Pedidos neste dispositivo</p>
+    <div id="pedidos-locais">
+      <p class="mp-vazio">Carregando...</p>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 Confeitaria Luar Rubro · São Paulo</p>
+  </footer>
+
+  <script>
+    function formatarCard(pedido) {
+      const entregue = pedido.status === 'Entregue';
+      const itensHtml = pedido.itens.map(i => `<li>${i.quantidade}x ${i.nome}</li>`).join('');
+
+      return `
+        <div class="mp-card">
+          <div class="mp-card-topo">
+            <div>
+              <span class="mp-codigo">Código: ${pedido.codigo.slice(0, 8)}</span><br>
+              <span class="mp-data">${pedido.data}</span>
+            </div>
+            <span class="mp-status-badge ${entregue ? 'entregue' : ''}">${pedido.status}</span>
+          </div>
+          <ul class="mp-itens">${itensHtml}</ul>
+          <a href="/acompanhar/${pedido.codigo}" class="mp-link">Acompanhar Pedido</a>
+        </div>
+      `;
+    }
+
+    async function carregarPedidosLocais() {
+      const container = document.getElementById('pedidos-locais');
+      const codigos = JSON.parse(localStorage.getItem('luarRubroPedidos') || '[]');
+
+      if (!codigos.length) {
+        container.innerHTML = '<p class="mp-vazio">Nenhum pedido feito neste dispositivo ainda.</p>';
+        return;
+      }
+
+      try {
+        const resposta = await fetch('/api/meus-pedidos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ codigos })
+        });
+
+        const dados = await resposta.json();
+
+        if (!dados.pedidos || !dados.pedidos.length) {
+          container.innerHTML = '<p class="mp-vazio">Nenhum pedido encontrado.</p>';
+          return;
+        }
+
+        // Mais recentes primeiro (a API não garante ordem, então ordenamos pela posição salva)
+        const ordemSalva = codigos.slice().reverse();
+        dados.pedidos.sort((a, b) => ordemSalva.indexOf(a.codigo) - ordemSalva.indexOf(b.codigo));
+
+        container.innerHTML = dados.pedidos.map(formatarCard).join('');
+
+      } catch (e) {
+        console.log('Erro ao carregar pedidos locais:', e);
+        container.innerHTML = '<p class="mp-vazio">Não foi possível carregar os pedidos. Tente novamente mais tarde.</p>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', carregarPedidosLocais);
+  </script>
+
+</body>
+
+</html>

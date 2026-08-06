@@ -15,34 +15,42 @@ rel="stylesheet">
 
 <body class="container mt-5">
 
-<h1>Pedidos Recebidos</h1>
-
-<div class="col-md-4">
-<div class="card bg-primary text-white">
-<div class="card-body">
-<h5>Total</h5>
-<h2>{{ total_pedidos }}</h2>
-</div>
-</div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Pedidos Recebidos</h1>
+  <div>
+    <a href="/admin/bolos" class="btn btn-outline-warning me-2">Ver Bolos</a>
+    <a href="/admin/chefes" class="btn btn-outline-warning me-2">Ver Chefes</a>
+  </div>
 </div>
 
-<div class="col-md-4">
-<div class="card bg-warning text-dark">
-<div class="card-body">
-<h5>Pendentes</h5>
-<h2>{{ pendentes }}</h2>
-</div>
-</div>
-</div>
+<div class="row mb-4">
 
-<div class="col-md-4">
-<div class="card bg-success text-white">
-<div class="card-body">
-<h5>Concluídos</h5>
-<h2>{{ concluidos }}</h2>
-</div>
-</div>
-</div>
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h3>{{ total_pedidos }}</h3>
+                <p>Total de Pedidos</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-warning text-dark">
+            <div class="card-body text-center">
+                <h3>{{ em_andamento }}</h3>
+                <p>Em Andamento</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h3>{{ entregues }}</h3>
+                <p>Entregues</p>
+            </div>
+        </div>
+    </div>
 
 </div>
 
@@ -54,7 +62,8 @@ rel="stylesheet">
 type="text"
 name="busca"
 class="form-control"
-placeholder="Buscar cliente">
+placeholder="Buscar cliente"
+value="{{ request.args.get('busca', '') }}">
 
 </div>
 
@@ -64,17 +73,15 @@ placeholder="Buscar cliente">
 name="status"
 class="form-select">
 
-<option value="">
-Todos
+<option value="" {% if not request.args.get('status') %}selected{% endif %}>
+Todas as etapas
 </option>
 
-<option value="Pendente">
-Pendente
+{% for etapa in etapas %}
+<option value="{{ etapa }}" {% if request.args.get('status') == etapa %}selected{% endif %}>
+{{ etapa }}
 </option>
-
-<option value="Concluído">
-Concluído
-</option>
+{% endfor %}
 
 </select>
 
@@ -94,45 +101,6 @@ Filtrar
 
 </form>
 
-<div class="row mb-4">
-
-    <div class="col-md-4">
-        <div class="card bg-primary text-white">
-            <div class="card-body text-center">
-                <h3>{{ total_pedidos }}</h3>
-                <p>Total de Pedidos</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card bg-warning text-dark">
-            <div class="card-body text-center">
-                <h3>{{ pendentes }}</h3>
-                <p>Pendentes</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card bg-success text-white">
-            <div class="card-body text-center">
-                <h3>{{ concluidos }}</h3>
-                <p>Concluídos</p>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<a
-href="/exportar-pedidos"
-class="btn btn-success mb-3">
-
-Exportar CSV
-
-</a>
-
 <a
 href="/exportar-pedidos"
 class="btn btn-success mb-3">
@@ -150,9 +118,11 @@ Exportar CSV
 <th>ID</th>
 <th>Cliente</th>
 <th>Telefone</th>
-<th>Bolo</th>
+<th>Endereço</th>
+<th>Itens</th>
+<th>Pagamento</th>
 <th>Data</th>
-<th>Status</th>
+<th>Etapa</th>
 <th>Ações</th>
 
 </tr>
@@ -172,35 +142,62 @@ Exportar CSV
 
 <td>{{ pedido.telefone }}</td>
 
-<td>{{ pedido.bolo }}</td>
-    <td>
-
-{{ pedido.data.strftime('%d/%m/%Y %H:%M') }}
-
+<td>
+{{ pedido.endereco }}
+{% if pedido.complemento %}<br><small class="text-muted">{{ pedido.complemento }}</small>{% endif %}
 </td>
 
-<td>{{ pedido.status }}</td>
+<td>
+<ul class="mb-0 ps-3">
+{% for item in pedido.itens %}
+  <li>{{ item.quantidade }}x {{ item.nome_bolo }}</li>
+{% endfor %}
+</ul>
+</td>
+
+<td>{{ pedido.forma_pagamento or '-' }}</td>
 
 <td>
 
-<a
-href="/alterar-status/{{ pedido.id }}"
-class="btn btn-success btn-sm">
+{{ pedido.data.strftime('%d/%m/%Y %H:%M') if pedido.data else '' }}
 
-Alterar Status
+</td>
 
-</a>
+<td>
 
-<a
-href="/deletar-pedido/{{ pedido.id }}"
-class="btn btn-danger btn-sm">
+<span class="badge {% if pedido.cancelado %}bg-dark{% elif pedido.status == 'Entregue' %}bg-success{% elif pedido.status == 'Saiu para Entrega' %}bg-info{% else %}bg-warning text-dark{% endif %} mb-2 d-block">
+{% if pedido.cancelado %}Cancelado{% else %}{{ pedido.status }}{% endif %}
+</span>
 
-Excluir
+<form method="POST" action="/alterar-status/{{ pedido.id }}" class="d-flex gap-1">
+  <select name="novo_status" class="form-select form-select-sm">
+    {% for etapa in etapas %}
+      <option value="{{ etapa }}" {% if pedido.status == etapa %}selected{% endif %}>{{ etapa }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn btn-primary btn-sm">Atualizar</button>
+</form>
 
+<a href="/acompanhar/{{ pedido.codigo_acompanhamento }}" target="_blank" class="btn btn-outline-light btn-sm mt-1 w-100">
+  Ver acompanhamento
 </a>
 
 </td>
 
+<td>
+
+<form method="POST" action="/deletar-pedido/{{ pedido.id }}" onsubmit="return confirm('Excluir este pedido?')">
+  <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+</form>
+
+</td>
+
+</tr>
+
+{% else %}
+
+<tr>
+  <td colspan="9" class="text-center text-muted">Nenhum pedido encontrado.</td>
 </tr>
 
 {% endfor %}
